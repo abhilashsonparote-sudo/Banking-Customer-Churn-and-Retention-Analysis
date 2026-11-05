@@ -1,0 +1,227 @@
+table bank_churn_clean
+	lineageTag: 80267cca-9eb7-4831-a443-a94757455a76
+
+	column customer_id
+		dataType: int64
+		formatString: 0
+		lineageTag: b0f4ca70-ba08-4e38-8654-c8069d3aaf05
+		summarizeBy: sum
+		sourceColumn: customer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column credit_score
+		dataType: int64
+		formatString: 0
+		lineageTag: 7658e16f-eaca-47c9-af3b-00b3177c9510
+		summarizeBy: sum
+		sourceColumn: credit_score
+
+		annotation SummarizationSetBy = Automatic
+
+	column geography
+		dataType: string
+		lineageTag: c5e02eb5-b0d9-4717-85b5-5da68ff1d74d
+		summarizeBy: none
+		sourceColumn: geography
+
+		annotation SummarizationSetBy = Automatic
+
+	column gender
+		dataType: string
+		lineageTag: 5e439783-0d6b-4eef-9eb6-cb5d715679c3
+		summarizeBy: none
+		sourceColumn: gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column age
+		dataType: int64
+		formatString: 0
+		lineageTag: be961762-b796-4828-a1a0-78112875bdb7
+		summarizeBy: sum
+		sourceColumn: age
+
+		annotation SummarizationSetBy = Automatic
+
+	column tenure
+		dataType: int64
+		formatString: 0
+		lineageTag: 279a336b-fc5e-4122-a6c7-1bf0acf6d6ab
+		summarizeBy: sum
+		sourceColumn: tenure
+
+		annotation SummarizationSetBy = Automatic
+
+	column balance
+		dataType: double
+		lineageTag: a539e70f-8b66-4dfb-b30e-78f831bcc08f
+		summarizeBy: sum
+		sourceColumn: balance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column num_of_products
+		dataType: int64
+		formatString: 0
+		lineageTag: 24b7359c-eeb6-4a1d-8980-705af5b2f469
+		summarizeBy: sum
+		sourceColumn: num_of_products
+
+		annotation SummarizationSetBy = Automatic
+
+	column has_credit_card
+		dataType: int64
+		formatString: 0
+		lineageTag: fbd133f7-38e5-46e5-9eaa-77001bb649e9
+		summarizeBy: sum
+		sourceColumn: has_credit_card
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_active
+		dataType: int64
+		formatString: 0
+		lineageTag: ff6f235c-7b23-4286-ac03-0aef3eb31251
+		summarizeBy: sum
+		sourceColumn: is_active
+
+		annotation SummarizationSetBy = Automatic
+
+	column estimated_salary
+		dataType: double
+		lineageTag: 88d68b39-c46e-4ecc-9acf-cb059e170a31
+		summarizeBy: sum
+		sourceColumn: estimated_salary
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column exited
+		dataType: int64
+		formatString: 0
+		lineageTag: f1d3c2dd-3f6b-4c5b-b133-664d268475d3
+		summarizeBy: sum
+		sourceColumn: exited
+
+		annotation SummarizationSetBy = Automatic
+
+	column age_group
+		dataType: string
+		lineageTag: e2234a9a-c40f-49c2-ac66-d76d9ddf4875
+		summarizeBy: none
+		sourceColumn: age_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column balance_category
+		dataType: string
+		lineageTag: e0479da8-8480-4ba6-abf5-9de84034f698
+		summarizeBy: none
+		sourceColumn: balance_category
+		sortByColumn: 'Balance Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Activity Status' = IF(bank_churn_clean[is_active] = 1, "Active", "Inactive")
+		lineageTag: 40a2b037-9a28-4625-8e8d-e5302d789fed
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Credit Tier' =
+			
+			SWITCH(
+			    TRUE(),
+			    bank_churn_clean[credit_score] < 580, "1. Poor (<580)",
+			    bank_churn_clean[credit_score] <= 669, "2. Fair (580-669)",
+			    bank_churn_clean[credit_score] <= 739, "3. Good (670-739)",
+			    bank_churn_clean[credit_score] <= 799, "4. Very Good (740-799)",
+			    "5. Excellent (800+)"
+			)
+		lineageTag: 38f7e696-5c1b-4e44-9337-2ffe33501f94
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Credit Card Status' = IF(bank_churn_clean[has_credit_card] = 1, "Has Credit Card", "No Credit Card")
+		lineageTag: 9e9e9cfb-cf12-4241-9b8b-9d6f22f68163
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Tenure Group' =
+			
+			SWITCH(
+			    TRUE(),
+			    bank_churn_clean[tenure] <= 2, "0-2 yrs",
+			    bank_churn_clean[tenure] <= 5, "3-5 yrs",
+			    bank_churn_clean[tenure] <= 8, "6-8 yrs",
+			    "9-10 yrs"
+			)
+		lineageTag: e573c3bf-e099-494f-ab43-a12f1bb68928
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Salary Bracket' =
+			
+			SWITCH(
+			    TRUE(),
+			    bank_churn_clean[estimated_salary] < 50000, "1. < $50k",
+			    bank_churn_clean[estimated_salary] <= 100000, "2. $50k - $100k",
+			    bank_churn_clean[estimated_salary] <= 150000, "3. $100k - $150k",
+			    "4. $150k+"
+			)
+		lineageTag: d341fa3d-03c6-4b31-9cf8-08062b8d58ea
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Balance Sort' =
+			
+			SWITCH(
+			    TRUE(),
+			    bank_churn_clean[balance] = 0, 1,
+			    bank_churn_clean[balance] < 50000, 2,
+			    bank_churn_clean[balance] <= 100000, 3,
+			    bank_churn_clean[balance] <= 150000, 4,
+			    5
+			)
+		formatString: 0
+		lineageTag: 96c02992-0c6f-4f56-80c8-2a5b010ecd58
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Risk Segment' =
+			
+			SWITCH(
+			    TRUE(),
+			    bank_churn_clean[balance] > 100000 && bank_churn_clean[is_active] = 0, "Critical Risk (High Balance, Inactive)",
+			    bank_churn_clean[balance] > 100000 && bank_churn_clean[is_active] = 1, "High Value Active (Retained Asset)",
+			    bank_churn_clean[balance] <= 100000 && bank_churn_clean[is_active] = 0, "Low Balance Inactive",
+			    "Low Balance Active"
+			)
+		lineageTag: 0f68ff20-27da-4702-b286-ebb49ed38ac6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition bank_churn_clean = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents("D:\Project\Banking_Customer_churn&_Retention\Data\processed\bank_churn_clean.csv"),[Delimiter=",", Columns=14, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Promoted Headers" = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"customer_id", Int64.Type}, {"credit_score", Int64.Type}, {"geography", type text}, {"gender", type text}, {"age", Int64.Type}, {"tenure", Int64.Type}, {"balance", type number}, {"num_of_products", Int64.Type}, {"has_credit_card", Int64.Type}, {"is_active", Int64.Type}, {"estimated_salary", type number}, {"exited", Int64.Type}, {"age_group", type text}, {"balance_category", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,20 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	valueFilterBehavior: independent
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["bank_churn_clean","measures_"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table bank_churn_clean
+ref table measures_
+
+ref cultureInfo en-US
+

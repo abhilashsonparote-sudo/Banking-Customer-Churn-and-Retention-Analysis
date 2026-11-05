@@ -1,0 +1,71 @@
+table measures_
+	lineageTag: 1990f10a-214c-4e41-a54b-97c4b18cabe3
+
+	measure 'Total Customers' = COUNTROWS(bank_churn_clean)
+		formatString: 0
+		lineageTag: 3422a8f4-ac27-4f7c-9686-fccb58e854fb
+
+	measure 'Churned Customers' =
+			
+			CALCULATE(
+			    COUNTROWS(bank_churn_clean),
+			    bank_churn_clean[exited] = 1
+			)
+		formatString: 0
+		lineageTag: 45d47778-ded7-4987-a2d0-a4d5289a4312
+
+	measure 'Retained Customers' =
+			
+			CALCULATE(
+			    COUNTROWS(bank_churn_clean),
+			    bank_churn_clean[exited] = 0
+			)
+		formatString: 0
+		lineageTag: c00b7453-9df1-4fb6-bbf8-55c782920b0f
+
+	measure 'Churn Rate' =
+			
+			DIVIDE([Churned Customers], [Total Customers], 0)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: c598be63-18e3-41a8-8ce2-d658162a7e13
+
+	measure 'Total Balance Lost' =
+			
+			CALCULATE(
+			    SUM(bank_churn_clean[balance]),
+			    bank_churn_clean[exited] = 1
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: dee575a1-a195-4fdd-8652-fb37f00eeda5
+
+	measure 'Critical Segment Loss' =
+			
+			CALCULATE(
+			    [Total Balance Lost],
+			    bank_churn_clean[Risk Segment] = "Critical Risk (High Balance, Inactive)"
+			)
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: 6a9a1687-ccef-425b-9222-8e7b404fc9f3
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	measure 'Avg Lost Balance' =
+			
+			DIVIDE([Total Balance Lost], [Churned Customers], 0)
+		formatString: \$#,0.0;(\$#,0.0);\$#,0.0
+		lineageTag: c7c43cb5-41e9-4bb3-9e71-d932ae1b66ea
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-US"}
+
+	partition measures_ = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
